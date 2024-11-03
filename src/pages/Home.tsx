@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { BiPlus } from "react-icons/bi";
 import { BsEye, BsEyeSlash } from "react-icons/bs";
 import { GrPieChart, GrTransaction } from "react-icons/gr";
 import { IoPieChart } from "react-icons/io5";
@@ -27,14 +28,17 @@ const Home = () => {
 
                 <div className="w-11/12 rounded-xl bg-blue-500 flex flex-col items-center justify-center h-28 my-3 mx-auto">
                     <div className="flex flex-row items-center justify-start w-full px-3">
-                        <h3 className="text-gray-50">Available valance</h3>
+                        <h3 className="text-gray-50">Available balance</h3>
                         <button className="w-auto h-auto flex items-center justify-center bg-transparent text-gray-50 ml-0" onClick={toggleBalanceShwon}>
                             {balanceShown == true ? <BsEye className="text-xl"></BsEye> : <BsEyeSlash className="text-xl"></BsEyeSlash>}
                         </button>
                     </div>
-                    <h3 className="text-4xl text-gray-50 text-left w-full ml-5">
-                        {balanceShown == true ? '₦1200' : '***'}
-                    </h3>
+                    <div className="flex flex-row justify-between items-center">
+                        <h3 className="text-4xl text-gray-50 text-left w-full ml-5">
+                            {balanceShown == true ? '₦1200' : '***'}
+                        </h3>
+                        <button className="bg-gray-50 h-7 w-52 rounded-2xl font-light text-sm flex flex-row items-center justify-center text-blue-500 mr-5"> <BiPlus></BiPlus> Add money</button>
+                    </div>
                 </div>
 
 
