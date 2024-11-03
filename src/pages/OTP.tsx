@@ -21,6 +21,10 @@ const OTP = () => {
     }
   };
 
+  const handleSubmit = () => {
+    // TO-DO: handle submit
+  }
+
   useEffect(() => {
     const total = `${figure_1}${figure_2}${figure_3}${figure_4}`;
     
@@ -99,6 +103,7 @@ const OTP = () => {
         className={`w-11/12 bg-black text-gray-50 rounded-2xl mx-auto my-5 ${
           formError && "bg-gray-400"
         }`}
+        onClick={handleSubmit}
       >
         Verify
       </button>
