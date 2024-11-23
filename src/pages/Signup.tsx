@@ -1,22 +1,76 @@
 import shapes from "./../assets/Shapes.png";
 import logo from "./../assets/Logo.png";
 import { useEffect, useState } from "react";
+import { toast } from "react-toastify";
+import { Link, useNavigate } from "react-router-dom";
 
 const Signup = () => {
+  const [name, setName] = useState<string>("");
   const [email, setEmail] = useState<string>("");
   const [password, setPassword] = useState<string>("");
   const [repeatPassword, setRepeatPassword] = useState<string>("");
   const [formError, setFormError] = useState<boolean>(true);
-  const handleSubmit = () => {};
+  const navigate = useNavigate();
+
+
+  const handleSubmit = async (e: any) => {
+    e.preventDefault();
+
+
+    try {
+      if(name.length < 1 || email.length < 1 || password.length < 1 || repeatPassword.length < 1){
+        throw new Error('Fill in all fields.');
+      }
+  
+      if(password != repeatPassword){
+        throw new Error('Passwords do not match.');
+      }
+
+      toast.info('Processing, Please wait...');
+      const body = {
+        fullname: name,
+        email: email,
+        password: password
+      }
+
+      const response = await fetch(`${import.meta.env.VITE_BACKEND_URL}/api/v1/auth/signup`, {
+        method: "POST",
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        credentials: 'include',
+        body: JSON.stringify(body),
+      });
+  
+      console.log(response);
+  
+      if (response.ok) {
+        localStorage.setItem('email_', email);
+        navigate('/otp');
+      } else {
+        let res = await response.json();
+        console.log(res);
+        toast.error(res.error);
+      }
+
+    } catch (error :any) {
+      toast.error(error.message as string);
+    }
+
+  };
 
   useEffect(() => {
-    if(email.length < 1 || password.length < 1 || repeatPassword.length < 1){
-        setFormError(true);
+    if (
+      name.length < 1 ||
+      email.length < 1 ||
+      password.length < 1 ||
+      repeatPassword.length < 1
+    ) {
+      setFormError(true);
+    } else {
+      setFormError(false);
     }
-    else{
-        setFormError(false);
-    }
-  }, [email, password, repeatPassword])
+  }, [name, email, password, repeatPassword]);
 
   return (
     <div className="fixed top-0 right-0 bottom-0 left-0">
@@ -38,10 +92,22 @@ const Signup = () => {
           </h3>
           <div className="flex flex-col mt-8 pl-2 py-3">
             <h3 className="w-11/12 mx-auto font-light text-gray-500 my-2 text-left">
-              Email Adress
+              Full name
             </h3>
             <input
               type="text"
+              className="p-2 text-gray-600 font-light border-b border-gray-400 bg-transparent w-11/12 mx-auto mb-4"
+              placeholder="Full name..."
+              onInput={(e: any) => {
+                setName(e.target.value);
+              }}
+              value={name}
+            />
+            <h3 className="w-11/12 mx-auto font-light text-gray-500 my-2 text-left">
+              Email Adress
+            </h3>
+            <input
+              type="email"
               className="p-2 text-gray-600 font-light border-b border-gray-400 bg-transparent w-11/12 mx-auto mb-4"
               placeholder="Email..."
               onInput={(e: any) => {
@@ -74,8 +140,14 @@ const Signup = () => {
               value={repeatPassword}
             />
           </div>
-          <a href="/login" className="text-black underline">Already have an account? Sign in</a>
-          <button className={`w-11/12 bg-black text-gray-50 rounded-2xl mx-auto my-5 ${formError && 'bg-gray-400'}`}>
+          <Link to="/login" className="text-black underline text-center">
+            Already have an account? Sign in
+          </Link>
+          <button
+            className={`w-11/12 bg-black text-gray-50 rounded-2xl mx-auto my-5 ${
+              formError && "bg-gray-400"
+            }`}
+          >
             Signup
           </button>
         </div>

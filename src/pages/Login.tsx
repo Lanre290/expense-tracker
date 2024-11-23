@@ -1,12 +1,54 @@
 import shapes from "./../assets/Shapes.png";
 import logo from "./../assets/Logo.png";
 import { useEffect, useState } from "react";
+import { Link, useNavigate } from "react-router-dom";
+import { toast } from "react-toastify";
 
 const Login = () => {
   const [email, setEmail] = useState<string>("");
   const [password, setPassword] = useState<string>("");
   const [formError, setFormError] = useState<boolean>(true);
-  const handleSubmit = () => {};
+  const navigate = useNavigate();
+
+
+  const handleSubmit = async (e: any) => {
+    e.preventDefault();
+
+
+    try {
+      if(email.length < 1 || password.length < 1){
+        throw new Error('Fill in all fields.');
+      }
+
+      toast.info('Processing, Please wait...');
+      const body = {
+        email: email,
+        password: password
+      }
+
+      const response = await fetch(`${import.meta.env.VITE_BACKEND_URL}/api/v1/auth/login`, {
+        method: "POST",
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        credentials: 'include',
+        body: JSON.stringify(body),
+      });
+  
+      if (response.ok) {
+        let res = await response.json();
+        localStorage.setItem('token', res.token);
+        navigate('/dashboard');
+      } else {
+        let res = await response.json();
+        toast.error(res.error);
+      }
+
+    } catch (error :any) {
+      toast.error(error as string);
+    }
+
+  };
 
   useEffect(() => {
     if(email.length < 1 || password.length < 1){
@@ -61,7 +103,7 @@ const Login = () => {
               value={password}
             />
           </div>
-          <a href="/signup" className="text-black underline">Don't have an account? Sign up</a>
+          <Link to="/signup" className="text-black underline text-center">Don't have an account? Sign up</Link>
           <button className={`w-11/12 bg-black text-gray-50 rounded-2xl mx-auto my-5 ${formError && 'bg-gray-400'}`}>
             Signup
           </button>
